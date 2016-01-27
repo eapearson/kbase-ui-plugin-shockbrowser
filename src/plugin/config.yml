@@ -1,0 +1,31 @@
+## Demo Plugin for Screencast
+---
+package:
+    author: Erik Pearson
+    name: shockbrowser
+    description: A plugin installing a route, menu definition, and widgets implementing a simple shock file browser.
+    date: January 26, 2016
+    version: 0.1.0
+source:
+    modules: []
+install:    
+    widgets:
+        -
+            module: plugins/shockbrowser/modules/browser
+            id: kb_shockbrowser_panel 
+            type: factory
+#        -
+#            module: plugins/shockbrowser/modules/browser
+#            id: kb_shockbrowser_browser
+#            type: factory
+    routes:
+        -
+            path: [shockbrowser]
+            widget: kb_shockbrowser_panel
+    menu:
+        -
+            name: shockbrowser
+            definition:
+                path: shockbrowser
+                label: Shock File Browser
+                icon: file
