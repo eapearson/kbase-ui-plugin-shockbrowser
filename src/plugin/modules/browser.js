@@ -3,11 +3,12 @@
 define([
     'bluebird',
     'numeral',
-    'kb/service/client/shock',
-    'kb/common/html',
-    'kb/common/format'
-], function (Promise, numeral, Shock, html, format) {
+    'kb_service/client/shock',
+    'kb_common/html',
+    'kb_common/format'
+], function(Promise, numeral, Shock, html, format) {
     'use strict';
+
     function factory(config) {
         var runtime = config.runtime,
             parent, container,
@@ -20,19 +21,22 @@ define([
 
         function renderTable(files) {
             var t = html.tag,
-                table = t('table'), tr = t('tr'), th = t('th'), td = t('td');
+                table = t('table'),
+                tr = t('tr'),
+                th = t('th'),
+                td = t('td');
 
-            return table({class: 'table'}, [
+            return table({ class: 'table' }, [
                 tr([
                     th('#'), th('Name'), th('Size'), th('Created'), th('Type')
                 ]),
-                files.map(function (file, index) {
+                files.map(function(file, index) {
                     console.log(file);
                     var created = new Date(file.created_on);
                     return tr([
                         td(String(index + 1)),
                         td(file.file.name),
-                        td({style: {textAlign: 'right'}},
+                        td({ style: { textAlign: 'right' } },
                             numeral(file.file.size).format('0 b')),
                         td(created.toLocaleString()),
                         td(file.type)
@@ -42,14 +46,15 @@ define([
         }
 
         function render(files) {
-            var t = html.tag, div = t('div');
+            var t = html.tag,
+                div = t('div');
 
-            return div({class: 'container-fluid'}, [
-                div({class: 'panel panel-default'}, [
-                    div({class: 'panel-heading'}, [
-                        div({class: 'panel-title'}, 'Shock File Browser')
+            return div({ class: 'container-fluid' }, [
+                div({ class: 'panel panel-default' }, [
+                    div({ class: 'panel-heading' }, [
+                        div({ class: 'panel-title' }, 'Shock File Browser')
                     ]),
-                    div({class: 'panel-body'}, [
+                    div({ class: 'panel-body' }, [
                         renderTable(files)
                     ])
                 ])
@@ -57,6 +62,7 @@ define([
         }
 
         var places = {};
+
         function addPlaceHolder(name) {
             var div = html.tag('div'),
                 id = html.genId();
@@ -70,6 +76,7 @@ define([
                 dataPlace: 'id'
             });
         }
+
         function setPlaceContent(name, content) {
             var place = places[name];
             if (place === undefined) {
@@ -80,8 +87,7 @@ define([
 
         function renderLayout() {
             return html.makeTabs({
-                tabs: [
-                    {
+                tabs: [{
                         label: 'File Browser',
                         content: addPlaceHolder('browser')
                     },
@@ -117,22 +123,21 @@ define([
                 limit: 100
             };
             return shockClient.get_nodes(options)
-                .then(function (nodes) {
-                    return Promise.all(nodes.map(function (node) {
+                .then(function(nodes) {
+                    return Promise.all(nodes.map(function(node) {
                         return shockClient.get_node_acls(node.id).
-                            then(function (acls) {
-                                node.acls = acls;
-                                return node;
-                            });
+                        then(function(acls) {
+                            node.acls = acls;
+                            return node;
+                        });
                     }));
                 })
-                .then(function (nodes) {
+                .then(function(nodes) {
                     setPlaceContent('browser', render(nodes));
                 });
         }
 
-        function stop() {
-        }
+        function stop() {}
 
         function detach() {
             if (container) {
@@ -148,7 +153,7 @@ define([
         };
     }
     return {
-        make: function (config) {
+        make: function(config) {
             return factory(config);
         }
     };
